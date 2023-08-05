@@ -132,9 +132,9 @@ components:
           type: string 
         closeApproachDate:
           type: string
-        relativeVelocityKMperhour:
+        relativeVelocityKmph:
           type: number
           format: double
-        missDistanceKMs:
+        missDistanceKm:
           type: number
           format: double
