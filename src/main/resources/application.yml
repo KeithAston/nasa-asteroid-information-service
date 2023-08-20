@@ -1,0 +1,11 @@
+spring.application.name: livescore-service
+server:
+  port: 8081
+
+com:
+  ka:
+    nasa:
+      lookup:
+        api-name: "Nasa Asteroid Lookup Service"
+        api-url: "https://api.nasa.gov/neo/rest/v1/neo/"
+        api-key: "iM3ilYzTcgfwmFefCqwaqVzpncBkkcPHDc8ACqXG" #insert your own token here

@@ -1,0 +1,140 @@
+openapi: 3.0.3
+info:
+  title: Nasa Asteroid Information Service - OpenAPI 3.0
+  description: |-
+    This API is a project to provide a spring boot app that hits Nasa's public API's and extract specific info from their payloads.
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://sampleAPIServer/api/v1
+tags:
+  - name: Asteroid Info
+    description: Everything you need to know about near Earth asteroids
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+paths:
+  /asteroid/{asteroidId}:
+    get:
+      tags:
+        - Asteroid Info
+      summary: Get up to date info on a specific near earth asteroid
+      description: Get up to date info on a specific near earth asteroid
+      operationId: getAsteroid
+      parameters:
+        - name: asteroidId
+          in: path
+          description: ID of asteroid that needs to be fetched
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asteroid'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Asteroid'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Asteroid not found
+        '405':
+          description: Validation exception
+  /asteroid/search:
+    post:
+      tags:
+        - Asteroid Info
+      summary: Search for up to 5 Near Earth Asteroids by dates
+      description: You can search for up to 5 near earth asteroids between two given dates
+      operationId: getAsteroidByDate
+      requestBody:
+        description: Created Search Dates object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchDates'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/SearchDates'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SearchDates'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asteroids'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Asteroids'
+components:
+  schemas:
+    Asteroids:
+      type: object
+      properties:
+        start_date:
+          type: string
+          format: date
+          example: 2023-08-22
+        end_date:
+          type: string
+          format: date
+          example: 2023-08-23
+        NumOfAsteroidsFound:
+          type: integer
+          format: int64
+          example: 5
+        asteroids:
+          type: array
+          items: 
+            $ref: '#/components/schemas/Asteroid'
+    SearchDates:
+      type: object
+      properties:
+        start_date:
+          type: string
+          format: date
+          example: 2023-08-22
+        end_date:
+          type: string
+          format: date
+          example: 2023-08-23
+    Asteroid:
+      required:
+        - name
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: Asteroid Name
+        isPotentiallyHazardous:
+          type: boolean
+        estimatedDiameterInKMs_Min:
+          type: string
+        estimatedDiameterInKMs_Max::
+          type: string 
+        closeApproachDate:
+          type: string
+        relativeVelocityKmph:
+          type: number
+          format: double
+        missDistanceKm:
+          type: number
+          format: double

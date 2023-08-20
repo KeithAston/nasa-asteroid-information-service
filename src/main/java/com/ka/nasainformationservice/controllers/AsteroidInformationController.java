@@ -1,8 +1,11 @@
 package com.ka.nasainformationservice.controllers;
 
+import com.ka.nasainformationservice.models.Asteroid;
+import com.ka.nasainformationservice.services.AsteroidLookupService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,9 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class AsteroidInformationController {
 
-    @RequestMapping("/getAsteroid")
-    public ResponseEntity<String> getAsteroidInfoWithID(){
-        return new ResponseEntity<>("Information will be here", HttpStatus.OK);
+    private AsteroidLookupService lookupService;
+
+    @RequestMapping("/asteroid/{asteroidId}")
+    public ResponseEntity<Asteroid> getAsteroid(@PathVariable("asteroidId") String asteroidId){
+        return new ResponseEntity<>(lookupService.getAsteroidByID(asteroidId),
+                HttpStatus.OK);
     }
 
 }
