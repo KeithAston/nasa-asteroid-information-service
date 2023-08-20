@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 public class Asteroid {
     private int id;
     private String name;
-    private boolean isPotentiallyHazardous;
-    private String estimatedDiameterInKMs_Min;
-    private String estimatedDiameterInKMs_Max;
+    private Boolean isPotentiallyHazardous;
+    private int estimatedDiameterInKMs_Min;
+    private int estimatedDiameterInKMs_Max;
     private String closeApproachDate;
     private double relativeVelocityKmph;
     private double missDistanceKm;

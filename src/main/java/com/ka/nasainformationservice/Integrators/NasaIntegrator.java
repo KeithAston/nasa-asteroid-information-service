@@ -1,5 +1,6 @@
 package com.ka.nasainformationservice.Integrators;
 
+import com.ka.nasainformationservice.Exceptions.APIKeyInvalidException;
 import com.ka.nasainformationservice.config.NasaAsteroidLookupConfiguration;
 import lombok.AllArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
@@ -19,7 +20,7 @@ public class NasaIntegrator {
 
     private static final String URL_PARAM_OPENER = "?";
     private static final String API_KEY_PARAM = "api_key=";
-    public String getAsteroidById(String asteroidId) {
+    public String getAsteroidById(String asteroidId) throws APIKeyInvalidException {
         log.info("Attempting to call Nasa API");
 
         try {
@@ -31,9 +32,15 @@ public class NasaIntegrator {
             log.info("Nasa Lookup API Successfully called");
             return response;
         } catch (Exception e) {
-            log.error("Failed to call Nasa API");
-            return null; //TODO: throw custom exception
+            log.error("Call to Nasa API failed");
+            if(invalidAPIKey(e)){
+                throw new APIKeyInvalidException("API Key provided is invalid");
+            }
+            return null;
 
         }
+    }
+    private boolean invalidAPIKey(Exception e){
+        return e.getMessage().contains("invalid api_key");
     }
 }
