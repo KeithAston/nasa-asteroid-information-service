@@ -12,7 +12,7 @@ externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
 servers:
-  - url: https://sampleAPIServer/api/v1
+  - url: https://sampleAPIServer:8080/api/v1
 tags:
   - name: Asteroid Info
     description: Everything you need to know about near Earth asteroids
@@ -76,13 +76,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Asteroids'          
+                $ref: '#/components/schemas/AsteroidLookupResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/Asteroids'
+                $ref: '#/components/schemas/AsteroidLookupResponse'
 components:
   schemas:
-    Asteroids:
+    AsteroidLookupResponse:
       type: object
       properties:
         start_date:
@@ -93,7 +93,7 @@ components:
           type: string
           format: date
           example: 2023-08-23
-        NumOfAsteroidsFound:
+        numOfAsteroidsFound:
           type: integer
           format: int64
           example: 5

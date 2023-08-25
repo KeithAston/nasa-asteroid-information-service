@@ -3,6 +3,8 @@ package com.ka.nasainformationservice.services;
 import com.ka.nasainformationservice.Exceptions.APIKeyInvalidException;
 import com.ka.nasainformationservice.Integrators.NasaIntegrator;
 import com.ka.nasainformationservice.models.Asteroid;
+import com.ka.nasainformationservice.models.AsteroidLookupResponse;
+import com.ka.nasainformationservice.models.SearchDates;
 import lombok.AllArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
 import org.json.JSONArray;
@@ -12,9 +14,7 @@ import org.springframework.stereotype.Service;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -22,6 +22,68 @@ import java.util.List;
 public class AsteroidLookupService {
 
     private NasaIntegrator nasaIntegrator;
+
+    public AsteroidLookupResponse getAsteroidByDate(SearchDates searchDates) {
+        String response;
+        try{
+            response = nasaIntegrator.getAsteroidByDates(searchDates);
+        } catch (APIKeyInvalidException e) {
+            log.error(e.getMessage());
+            return null;
+        }
+
+        AsteroidLookupResponse lookupResponse = populateAsteroidsByDates(response, searchDates);
+
+
+    }
+
+    private AsteroidLookupResponse populateAsteroidsByDates(String response, SearchDates searchDates){
+        AsteroidLookupResponse lookupResponse = new AsteroidLookupResponse();
+        lookupResponse.setStart_date(searchDates.getStart_date());
+        lookupResponse.setEnd_date(searchDates.getEnd_date());
+        JSONObject jsonResponse = new JSONObject(response);
+        int asteroidsFound = jsonResponse.getInt("element_count");
+
+        if(asteroidsFound >= 5) {
+            log.info("5 or more asteroids were found between given dates," +
+                    " 5 will be processed");
+            lookupResponse.setNumOfAsteroidsFound(5);
+            lookupResponse.setAsteroids(populateAsteroids(jsonResponse,5, searchDates));
+        } else if (asteroidsFound > 0){
+            log.info("Processing " + asteroidsFound + " asteroids");
+            lookupResponse.setNumOfAsteroidsFound(asteroidsFound);
+            lookupResponse.setAsteroids(populateAsteroids(jsonResponse, asteroidsFound, searchDates));
+
+        }
+
+        return lookupResponse;
+
+
+    }
+
+    private Asteroid[] populateAsteroids(JSONObject jsonResponse, int asteroidCount, SearchDates searchDates){
+        JSONObject nearEarthObjects = (JSONObject) jsonResponse.get("near_earth_objects");
+        Asteroid[] asteroids;
+        JSONArray objectsArray = nearEarthObjects.getJSONArray(searchDates.getEnd_date());
+
+        for (int i = 0; i < objectsArray.length() && i < 5; i++) {
+            Asteroid asteroid = new Asteroid();
+
+            JSONObject asteroidInfo = (JSONObject) objectsArray.get(i);
+
+            asteroid.setId(Integer.parseInt(asteroidInfo.getString("id")));
+            asteroid.setName(asteroidInfo.getString("name"));
+            asteroid.setIsPotentiallyHazardous(asteroidInfo.getBoolean("is_potentially_hazardous_asteroid"));
+
+
+            //reuse below code to avoid repetition
+
+
+        }
+
+
+
+    }
 
     public Asteroid getAsteroidByID(String asteroidID){
         String response;
@@ -32,12 +94,12 @@ public class AsteroidLookupService {
             return null;
         }
 
-        Asteroid asteroid = populateAsteroidInfo(response);
+        Asteroid asteroid = populateAsteroidLookupInfo(response);
 
         return asteroid;
     }
 
-    private Asteroid populateAsteroidInfo(String response) {
+    private Asteroid populateAsteroidLookupInfo(String response) {
         JSONObject jsonResponse = new JSONObject(response);
         Asteroid asteroid = new Asteroid();
         asteroid.setId(Integer.parseInt(jsonResponse.getString("id")));
