@@ -9,8 +9,8 @@ public class Asteroid {
     private int id;
     private String name;
     private Boolean isPotentiallyHazardous;
-    private int estimatedDiameterInKMs_Min;
-    private int estimatedDiameterInKMs_Max;
+    private double estimatedDiameterInKMs_Min;
+    private double estimatedDiameterInKMs_Max;
     private String closeApproachDate;
     private double relativeVelocityKmph;
     private double missDistanceKm;
