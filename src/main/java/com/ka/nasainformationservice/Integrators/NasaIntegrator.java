@@ -86,6 +86,6 @@ public class NasaIntegrator {
     }
 
     private boolean invalidAPIKey(Exception e){
-        return e.getMessage().contains("invalid api_key");
+        return e.getMessage().contains(MainHelper.INVALID_API_KEY_SNIPPET);
     }
 }

@@ -2,6 +2,7 @@ package com.ka.nasainformationservice.services;
 
 import com.ka.nasainformationservice.Exceptions.APIKeyInvalidException;
 import com.ka.nasainformationservice.Integrators.NasaIntegrator;
+import com.ka.nasainformationservice.helpers.MainHelper;
 import com.ka.nasainformationservice.models.Asteroid;
 import com.ka.nasainformationservice.models.AsteroidLookupResponse;
 import com.ka.nasainformationservice.models.SearchDates;
@@ -34,10 +35,10 @@ public class AsteroidLookupService {
         lookupResponse.setStart_date(searchDates.getStart_date());
         lookupResponse.setEnd_date(searchDates.getEnd_date());
         JSONObject jsonResponse = new JSONObject(response);
-        int asteroidsFound = jsonResponse.getInt("element_count");
+        int asteroidsFound = jsonResponse.getInt(MainHelper.ELEMENT_COUNT_KEY);
 
         if(asteroidsFound > 5) {
-            log.info("More than 5 asteroids were found between given dates");
+            log.info(MainHelper.FIVE_ASTEROIDS_ONLY_MESSAGE);
             asteroidsFound = 5;
         }
         log.info("Processing " + asteroidsFound + " asteroids");
@@ -48,26 +49,17 @@ public class AsteroidLookupService {
     }
 
     private Asteroid[] populateAsteroids(JSONObject jsonResponse, int asteroidCount, SearchDates searchDates){
-        JSONObject nearEarthObjects = (JSONObject) jsonResponse.get("near_earth_objects");
+        JSONObject nearEarthObjects = (JSONObject) jsonResponse.get(MainHelper.NEAR_EARTH_OBJECTS_KEY);
 
         JSONArray objectsArray = nearEarthObjects.getJSONArray(searchDates.getStart_date());
-        Asteroid[] asteroids = new Asteroid[objectsArray.length()];
+        Asteroid[] asteroids = new Asteroid[asteroidCount];
 
-        for (int i = 0; i < objectsArray.length() && i < 5; i++) {
-            Asteroid asteroid = new Asteroid();
-
+        for (int i = 0; i < asteroidCount && i < 5; i++) {
             JSONObject asteroidInfo = (JSONObject) objectsArray.get(i);
-
-            asteroid.setId(Integer.parseInt(asteroidInfo.getString("id")));
-            asteroid.setName(asteroidInfo.getString("name"));
-            asteroid.setIsPotentiallyHazardous(asteroidInfo.getBoolean("is_potentially_hazardous_asteroid"));
-
-            asteroid = extractAsteroidMetrics(asteroid, asteroidInfo);
+            Asteroid asteroid = populateAsteroidLookupInfo(asteroidInfo);
             asteroids[i] = asteroid;
         }
-
         return asteroids;
-
     }
 
     public Asteroid getAsteroidByID(String asteroidID){
@@ -78,63 +70,62 @@ public class AsteroidLookupService {
             log.error(e.getMessage());
             return null;
         }
-        return populateAsteroidLookupInfo(response);
+        return populateAsteroidLookupInfo(new JSONObject(response));
     }
 
-    private Asteroid populateAsteroidLookupInfo(String response) {
-        JSONObject jsonResponse = new JSONObject(response);
+    private Asteroid populateAsteroidLookupInfo(JSONObject json) {
         Asteroid asteroid = new Asteroid();
-        asteroid.setId(Integer.parseInt(jsonResponse.getString("id")));
-        asteroid.setName(jsonResponse.getString("name"));
-        asteroid.setIsPotentiallyHazardous(jsonResponse.getBoolean("is_potentially_hazardous_asteroid"));
+        asteroid.setId(Integer.parseInt(json.getString(MainHelper.ID_KEY)));
+        asteroid.setName(json.getString(MainHelper.NAME_KEY));
+        asteroid.setIsPotentiallyHazardous(json.getBoolean(MainHelper.IS_POTENTIALLY_DANGEROUS_KEY));
 
-        asteroid = extractAsteroidMetrics(asteroid, jsonResponse);
+        asteroid = extractAsteroidMetrics(asteroid, json);
         return asteroid;
     }
 
     private Asteroid extractAsteroidMetrics(Asteroid asteroid, JSONObject response){
 
-        JSONObject estimatedDiameters = response.getJSONObject("estimated_diameter");
-        JSONObject kilometers = estimatedDiameters.getJSONObject("kilometers");
+        JSONObject estimatedDiameters = response.getJSONObject(MainHelper.ESTIMATED_DIAMETER_KEY);
+        JSONObject kilometers = estimatedDiameters.getJSONObject(MainHelper.KILOMETERS_KEY);
 
-        asteroid.setEstimatedDiameterInKMs_Min(kilometers.getDouble("estimated_diameter_min"));
-        asteroid.setEstimatedDiameterInKMs_Max(kilometers.getDouble("estimated_diameter_max"));
+        asteroid.setEstimatedDiameterInKMs_Min(kilometers.getDouble(MainHelper.ESTIMATED_DIAMETER_MIN_KEY));
+        asteroid.setEstimatedDiameterInKMs_Max(kilometers.getDouble(MainHelper.ESTIMATED_DIAMETER_MAX_KEY));
 
         return populateCloseApproachData(asteroid, response);
     }
 
     private Asteroid populateCloseApproachData(Asteroid asteroid, JSONObject response){
-        JSONArray closeApproachDataArray = response.getJSONArray("close_approach_data");
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-DD");
+        JSONArray closeApproachDataArray = response.getJSONArray(MainHelper.CLOSE_APPROACH_DATA_KEY);
+        DateFormat formatter = new SimpleDateFormat(MainHelper.DATE_FORMAT);
         Date todayDate = new Date();
         JSONObject approachInfo;
         Date approachDate;
-        log.info("Parsing Close Approach Data");
+        log.info(MainHelper.PARSING_CLOSE_APPROACH_DATA);
 
         try {
             for (int i = 0; i < closeApproachDataArray.length(); i++) {
                 approachInfo = closeApproachDataArray.getJSONObject(i);
-                approachDate = (Date) formatter.parse(approachInfo.getString("close_approach_date"));
+                approachDate = (Date) formatter.parse(approachInfo.getString(MainHelper.CLOSE_APPROACH_DATE_KEY));
 
                 if (approachDate.compareTo(todayDate) >= 0 || closeApproachDataArray.length() == 1) {
                     asteroid.setCloseApproachDate(formatter.format(approachDate));
 
-                    JSONObject relativeVelocity = approachInfo.getJSONObject("relative_velocity");
-                    asteroid.setRelativeVelocityKmph(Double.parseDouble(relativeVelocity.getString("kilometers_per_hour")));
+                    JSONObject relativeVelocity = approachInfo.getJSONObject(MainHelper.RELATIVE_VELOCITY_KEY);
+                    asteroid.setRelativeVelocityKmph(Double.parseDouble(relativeVelocity.getString(MainHelper.KMPH_KEY)));
 
-                    JSONObject missDistance = approachInfo.getJSONObject("miss_distance");
-                    asteroid.setMissDistanceKm(Double.parseDouble(missDistance.getString("kilometers")));
+                    JSONObject missDistance = approachInfo.getJSONObject(MainHelper.MISS_DIST_KEY);
+                    asteroid.setMissDistanceKm(Double.parseDouble(missDistance.getString(MainHelper.KILOMETERS_KEY)));
 
-                    log.info("Successfully parsed Close Approach Data");
+                    log.info(MainHelper.PARSING_CLOSE_APPROACH_DATA_SUCCESS);
                     return asteroid;
                 }
             }
             return asteroid;
         } catch (ParseException parseException) {
-            log.error("Parsing Exception on Close Approach Data : " + parseException);
+            log.error(MainHelper.PARSING_CLOSE_APPROACH_DATA_EXCEPTION + parseException);
             return asteroid;
         } catch (Exception e) {
-            log.error("Unknown exception while parsing Close Approach Data : " + e);
+            log.error(MainHelper.PARSING_CLOSE_APPROACH_DATA_UNKNOWN_EXCEPTION + e);
             return asteroid;
         }
     }
