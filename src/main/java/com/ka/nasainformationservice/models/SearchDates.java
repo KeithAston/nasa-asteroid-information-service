@@ -1,15 +1,16 @@
 package com.ka.nasainformationservice.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
 public class SearchDates {
-    @NotNull
+    @NotEmpty
     private String start_date;
-    @NotNull
+
+    @NotEmpty
     private String end_date;
 }

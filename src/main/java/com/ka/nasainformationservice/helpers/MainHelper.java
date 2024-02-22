@@ -12,9 +12,11 @@ public class MainHelper {
     public static final String NASA_API_SUCCESS_MESSAGE = "Nasa Lookup API Successfully called";
     public static final String NASA_API_FAILED_MESSAGE = "Call to Nasa Specific Date Search API failed";
     public static final String NASA_API_INVALID_KEY = "API Key provided is invalid";
-    public static final String GENERIC_EXCEPTION_MESSAGE = "Something went wrong, please contact support";
+    public static final String GENERIC_EXCEPTION_MESSAGE = "Something went wrong, please check API key or contact support";
     public static final String API_KEY_INVALID_ASTEROID_DATES = "API key invalid when retrieving asteroids by date";
+    public static final String API_KEY_INVALID_ASTEROID_ID = "API key invalid when retrieving asteroids by Id";
     public static final String ASTEROID_BY_DATE_GENERIC_ERROR = "Error retrieving asteroids by date : ";
+    public static final String ASTEROID_BY_ID_GENERIC_ERROR = "Error retrieving asteroids by Id : ";
     public static final String PARSING_CLOSE_APPROACH_DATA = "Parsing Close Approach Data";
     public static final String PARSING_CLOSE_APPROACH_DATA_EXCEPTION = "Parsing Exception on Close Approach Data : ";
     public static final String PARSING_CLOSE_APPROACH_DATA_UNKNOWN_EXCEPTION = "Unknown exception while parsing Close Approach Data : ";

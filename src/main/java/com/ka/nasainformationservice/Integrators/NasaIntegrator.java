@@ -8,10 +8,10 @@ import com.ka.nasainformationservice.models.SearchDates;
 import lombok.AllArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-@Service
+@Component
 @AllArgsConstructor
 @CommonsLog
 public class NasaIntegrator {
@@ -40,7 +40,7 @@ public class NasaIntegrator {
         }
     }
 
-    public String getAsteroidById(String asteroidId) throws APIKeyInvalidException {
+    public String getAsteroidById(String asteroidId) throws Exception {
         log.info(MainHelper.NASA_API_REQUEST_STARTING);
 
         try {
@@ -54,7 +54,7 @@ public class NasaIntegrator {
             if(invalidAPIKey(e)){
                 throw new APIKeyInvalidException(MainHelper.NASA_API_INVALID_KEY);
             }
-            return null;
+            throw new Exception(e.getMessage());
         }
     }
 

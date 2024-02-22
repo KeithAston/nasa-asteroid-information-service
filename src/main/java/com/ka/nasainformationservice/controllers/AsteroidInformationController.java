@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-
 @RestController
 @RequestMapping("/api/v1")
 @AllArgsConstructor
@@ -25,23 +24,24 @@ public class AsteroidInformationController {
     private final AsteroidLookupService lookupService;
 
     @GetMapping("/asteroid/{asteroidId}")
-    public ResponseEntity<Asteroid> getAsteroid(@PathVariable("asteroidId") String asteroidId){
-        return new ResponseEntity<>(lookupService.getAsteroidByID(asteroidId),
-                HttpStatus.OK);
+    public ResponseEntity<? extends Object> getAsteroid(@PathVariable("asteroidId") String asteroidId){
+        Asteroid asteroid = lookupService.getAsteroidByID(asteroidId);
+
+        if(asteroid != null){
+            return new ResponseEntity<>(asteroid, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(MainHelper.GENERIC_EXCEPTION_MESSAGE, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     @PostMapping("/asteroid/search")
-    public HttpEntity<? extends Object> getAsteroidByDate(@Valid @RequestBody SearchDates searchDates){
-        try {
-            return new ResponseEntity<>(lookupService.getAsteroidByDate(searchDates),
+    public ResponseEntity<? extends Object> getAsteroidByDate(@Valid @RequestBody SearchDates searchDates){
+        AsteroidLookupResponse asteroidLookupResponse = lookupService.getAsteroidByDate(searchDates);
+
+        if(asteroidLookupResponse != null) {
+            return new ResponseEntity<>(asteroidLookupResponse,
                     HttpStatus.OK);
-        } catch (APIKeyInvalidException apiKeyInvalidException) {
-            log.error(MainHelper.API_KEY_INVALID_ASTEROID_DATES);
-            return new ResponseEntity<>(MainHelper.NASA_API_INVALID_KEY, HttpStatus.FORBIDDEN);
-        } catch (Exception e) {
-            log.error(MainHelper.ASTEROID_BY_DATE_GENERIC_ERROR + e);
-            return new ResponseEntity<>(MainHelper.GENERIC_EXCEPTION_MESSAGE, HttpStatus.UNPROCESSABLE_ENTITY);
         }
+        return new ResponseEntity<>(MainHelper.GENERIC_EXCEPTION_MESSAGE, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
 }
