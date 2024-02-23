@@ -24,22 +24,23 @@ public class AsteroidInformationController {
     private final AsteroidLookupService lookupService;
 
     @GetMapping("/asteroid/{asteroidId}")
-    public ResponseEntity<? extends Object> getAsteroid(@PathVariable("asteroidId") String asteroidId){
+    public ResponseEntity<?> getAsteroid(@PathVariable("asteroidId") String asteroidId){
         Asteroid asteroid = lookupService.getAsteroidByID(asteroidId);
 
         if(asteroid != null){
+            log.info(MainHelper.PARSING_ASTEROID_DATA_SUCCESS);
             return new ResponseEntity<>(asteroid, HttpStatus.OK);
         }
         return new ResponseEntity<>(MainHelper.GENERIC_EXCEPTION_MESSAGE, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     @PostMapping("/asteroid/search")
-    public ResponseEntity<? extends Object> getAsteroidByDate(@Valid @RequestBody SearchDates searchDates){
+    public ResponseEntity<?> getAsteroidByDate(@Valid @RequestBody SearchDates searchDates){
         AsteroidLookupResponse asteroidLookupResponse = lookupService.getAsteroidByDate(searchDates);
 
         if(asteroidLookupResponse != null) {
-            return new ResponseEntity<>(asteroidLookupResponse,
-                    HttpStatus.OK);
+            log.info(MainHelper.PARSING_ASTEROID_DATA_SUCCESS);
+            return new ResponseEntity<>(asteroidLookupResponse, HttpStatus.OK);
         }
         return new ResponseEntity<>(MainHelper.GENERIC_EXCEPTION_MESSAGE, HttpStatus.SERVICE_UNAVAILABLE);
     }

@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestTemplate;
 
 @Component
@@ -24,33 +25,39 @@ public class NasaIntegrator {
 
     public String getAsteroidByDates(SearchDates searchDates) throws Exception {
         log.info(MainHelper.NASA_API_REQUEST_STARTING);
-
+        StopWatch watch = new StopWatch();
+        watch.start();
         try {
             String response = restTemplate.getForObject(
                     getDatesearchAPIUrl(searchDates), String.class);
-            log.info(MainHelper.NASA_API_SUCCESS_MESSAGE);
+            watch.stop();
+            log.info(MainHelper.NASA_API_SUCCESS_MESSAGE + watch.getTotalTimeSeconds() + "s");
             return response;
         } catch (Exception e) {
-            log.error(MainHelper.NASA_API_FAILED_MESSAGE);
+            watch.stop();
+            log.error(MainHelper.NASA_API_FAILED_MESSAGE + watch.getTotalTimeSeconds() + "s");
             if(invalidAPIKey(e)){
                 log.error(MainHelper.NASA_API_INVALID_KEY);
                 throw new APIKeyInvalidException(MainHelper.NASA_API_INVALID_KEY);
             }
-            throw new Exception(MainHelper.NASA_API_FAILED_MESSAGE);
+            throw new Exception(e.getMessage());
         }
     }
 
     public String getAsteroidById(String asteroidId) throws Exception {
         log.info(MainHelper.NASA_API_REQUEST_STARTING);
-
+        StopWatch watch = new StopWatch();
+        watch.start();
         try {
             String response = restTemplate.getForObject(
                     getLookupSearchAPIUrl(asteroidId),
                     String.class);
-            log.info(MainHelper.NASA_API_SUCCESS_MESSAGE);
+            watch.stop();
+            log.info(MainHelper.NASA_API_SUCCESS_MESSAGE  + watch.getTotalTimeSeconds() + "s");
             return response;
         } catch (Exception e) {
-            log.error(MainHelper.NASA_API_FAILED_MESSAGE);
+            watch.stop();
+            log.error(MainHelper.NASA_API_FAILED_MESSAGE  + watch.getTotalTimeSeconds() + "s");
             if(invalidAPIKey(e)){
                 throw new APIKeyInvalidException(MainHelper.NASA_API_INVALID_KEY);
             }

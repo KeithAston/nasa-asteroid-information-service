@@ -13,6 +13,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 @Service
 @AllArgsConstructor
 @CommonsLog
@@ -33,12 +39,15 @@ public class AsteroidLookupService {
             return null;
         }
 
-        return commonUtils.populateAsteroidLookupInfo(new JSONObject(response));
+        log.info(MainHelper.PARSING_ASTEROID_DATA);
+        return commonUtils.parseAsteroidData(new JSONObject(response));
     }
 
     public AsteroidLookupResponse getAsteroidByDate(SearchDates searchDates) {
+
         String response;
         try {
+            validateSearchDates(searchDates);
             response = nasaIntegrator.getAsteroidByDates(searchDates);
         } catch (APIKeyInvalidException e) {
             log.error(MainHelper.API_KEY_INVALID_ASTEROID_DATES);
@@ -49,6 +58,17 @@ public class AsteroidLookupService {
         }
 
         return parseAsteroidData(response, searchDates);
+    }
+
+    private void validateSearchDates(SearchDates searchDates) throws Exception {
+        DateFormat formatter = new SimpleDateFormat(MainHelper.DATE_FORMAT);
+        Date startDate = formatter.parse(searchDates.getStart_date());
+        Date endDate = formatter.parse(searchDates.getEnd_date());
+        long diffInMillis = Math.abs(endDate.getTime() - startDate.getTime());
+
+        if(TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS) > 7) {
+            throw new Exception("Please choose dates within 7 days of each other.");
+        }
     }
 
     private AsteroidLookupResponse parseAsteroidData(String response, SearchDates searchDates){
@@ -74,10 +94,11 @@ public class AsteroidLookupService {
 
         JSONArray objectsArray = nearEarthObjects.getJSONArray(searchDates.getStart_date());
         Asteroid[] asteroids = new Asteroid[asteroidCount];
+        log.info(MainHelper.PARSING_ASTEROID_DATA);
 
         for (int i = 0; i < asteroidCount && i < 5; i++) {
             JSONObject asteroidInfo = (JSONObject) objectsArray.get(i);
-            Asteroid asteroid = commonUtils.populateAsteroidLookupInfo(asteroidInfo);
+            Asteroid asteroid = commonUtils.parseAsteroidData(asteroidInfo);
             asteroids[i] = asteroid;
         }
         return asteroids;

@@ -18,7 +18,7 @@ import java.util.Date;
 @CommonsLog
 public class CommonUtils {
 
-    public Asteroid populateAsteroidLookupInfo(JSONObject json) {
+    public Asteroid parseAsteroidData(JSONObject json) {
         Asteroid asteroid = new Asteroid();
         asteroid.setId(Integer.parseInt(json.getString(MainHelper.ID_KEY)));
         asteroid.setName(json.getString(MainHelper.NAME_KEY));
@@ -44,7 +44,7 @@ public class CommonUtils {
         Date todayDate = new Date();
         JSONObject approachInfo;
         Date approachDate;
-        log.info(MainHelper.PARSING_CLOSE_APPROACH_DATA);
+
 
         try {
             for (int i = 0; i < closeApproachDataArray.length(); i++) {
@@ -60,7 +60,6 @@ public class CommonUtils {
                     JSONObject missDistance = approachInfo.getJSONObject(MainHelper.MISS_DIST_KEY);
                     asteroid.setMissDistanceKm(Double.parseDouble(missDistance.getString(MainHelper.KILOMETERS_KEY)));
 
-                    log.info(MainHelper.PARSING_CLOSE_APPROACH_DATA_SUCCESS);
                     return asteroid;
                 }
             }

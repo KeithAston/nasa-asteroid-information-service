@@ -9,18 +9,18 @@ public class MainHelper {
     public static final String DATE_FORMAT = "yyyy-MM-DD";
 
     public static final String NASA_API_REQUEST_STARTING = "Attempting to call Nasa API";
-    public static final String NASA_API_SUCCESS_MESSAGE = "Nasa Lookup API Successfully called";
-    public static final String NASA_API_FAILED_MESSAGE = "Call to Nasa Specific Date Search API failed";
+    public static final String NASA_API_SUCCESS_MESSAGE = "Nasa Lookup API Successfully called in : ";
+    public static final String NASA_API_FAILED_MESSAGE = "Call to Nasa Specific Date Search API failed in : ";
     public static final String NASA_API_INVALID_KEY = "API Key provided is invalid";
     public static final String GENERIC_EXCEPTION_MESSAGE = "Something went wrong, please check API key or contact support";
     public static final String API_KEY_INVALID_ASTEROID_DATES = "API key invalid when retrieving asteroids by date";
     public static final String API_KEY_INVALID_ASTEROID_ID = "API key invalid when retrieving asteroids by Id";
     public static final String ASTEROID_BY_DATE_GENERIC_ERROR = "Error retrieving asteroids by date : ";
     public static final String ASTEROID_BY_ID_GENERIC_ERROR = "Error retrieving asteroids by Id : ";
-    public static final String PARSING_CLOSE_APPROACH_DATA = "Parsing Close Approach Data";
-    public static final String PARSING_CLOSE_APPROACH_DATA_EXCEPTION = "Parsing Exception on Close Approach Data : ";
-    public static final String PARSING_CLOSE_APPROACH_DATA_UNKNOWN_EXCEPTION = "Unknown exception while parsing Close Approach Data : ";
-    public static final String PARSING_CLOSE_APPROACH_DATA_SUCCESS = "Successfully parsed Close Approach Data";
+    public static final String PARSING_ASTEROID_DATA = "Parsing Asteroid Data";
+    public static final String PARSING_CLOSE_APPROACH_DATA_EXCEPTION = "Parsing Exception on Asteroid Data : ";
+    public static final String PARSING_CLOSE_APPROACH_DATA_UNKNOWN_EXCEPTION = "Unknown exception while parsing Asteroid Data : ";
+    public static final String PARSING_ASTEROID_DATA_SUCCESS = "Successfully parsed Asteroid Data";
     public static final String INVALID_API_KEY_SNIPPET = "invalid api_key";
 
     public static final String ELEMENT_COUNT_KEY = "element_count";
