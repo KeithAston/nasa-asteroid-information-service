@@ -52,7 +52,7 @@ public class AsteroidLookupServiceTest {
     @Test
     public void test_getAsteroidById() throws Exception {
         when(nasaIntegrator.getAsteroidById("123")).thenReturn(getSampleJson());
-        when(commonUtils.populateAsteroidLookupInfo(any(JSONObject.class))).thenReturn(getAsteroid());
+        when(commonUtils.parseAsteroidData(any(JSONObject.class))).thenReturn(getAsteroid());
         Asteroid asteroid = asteroidLookupService.getAsteroidByID("123");
         assertEquals(asteroid.getId(),123);
         assertEquals(asteroid.getIsPotentiallyHazardous(), true);
@@ -88,7 +88,10 @@ public class AsteroidLookupServiceTest {
     }
 
     private SearchDates getSearchDates(){
-        return new SearchDates("2015-09-21", "2015-09-22");
+        SearchDates searchDates = new SearchDates();
+        searchDates.setStart_date("2015-09-21");
+        searchDates.setEnd_date("2015-09-22");
+        return searchDates;
     }
 
     private String getSampleJson(){
