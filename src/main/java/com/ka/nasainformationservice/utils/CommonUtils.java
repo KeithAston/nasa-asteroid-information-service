@@ -45,7 +45,6 @@ public class CommonUtils {
         JSONObject approachInfo;
         Date approachDate;
 
-
         try {
             for (int i = 0; i < closeApproachDataArray.length(); i++) {
                 approachInfo = closeApproachDataArray.getJSONObject(i);

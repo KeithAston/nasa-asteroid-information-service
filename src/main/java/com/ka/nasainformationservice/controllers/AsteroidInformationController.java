@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -33,7 +32,7 @@ public class AsteroidInformationController {
     }
 
     @PostMapping("/asteroid/search")
-    public ResponseEntity<?> getAsteroidByDate(@Valid @RequestBody SearchDates searchDates){
+    public ResponseEntity<?> getAsteroidByDate(@RequestBody SearchDates searchDates){
         AsteroidLookupResponse asteroidLookupResponse = lookupService.getAsteroidByDate(searchDates);
 
         if(asteroidLookupResponse != null) {
