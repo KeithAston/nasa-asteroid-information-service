@@ -29,6 +29,7 @@ public class AsteroidLookupService {
 
     public Asteroid getAsteroidByID(String asteroidID){
         String response;
+
         try {
             response = nasaIntegrator.getAsteroidById(asteroidID);
         } catch (APIKeyInvalidException e) {
@@ -44,8 +45,8 @@ public class AsteroidLookupService {
     }
 
     public AsteroidLookupResponse getAsteroidByDate(SearchDates searchDates) {
-
         String response;
+
         try {
             validateSearchDates(searchDates);
             response = nasaIntegrator.getAsteroidByDates(searchDates);
