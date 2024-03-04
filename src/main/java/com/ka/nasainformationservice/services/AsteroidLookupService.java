@@ -17,6 +17,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -62,9 +63,9 @@ public class AsteroidLookupService {
     }
 
     private void validateSearchDates(SearchDates searchDates) throws Exception {
-        DateFormat formatter = new SimpleDateFormat(MainHelper.DATE_FORMAT);
-        Date startDate = formatter.parse(searchDates.getStart_date());
-        Date endDate = formatter.parse(searchDates.getEnd_date());
+        var formatter = new SimpleDateFormat(MainHelper.DATE_FORMAT);
+        var startDate = formatter.parse(searchDates.getStart_date());
+        var endDate = formatter.parse(searchDates.getEnd_date());
         long diffInMillis = Math.abs(endDate.getTime() - startDate.getTime());
 
         if(TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS) > 7) {
@@ -73,11 +74,11 @@ public class AsteroidLookupService {
     }
 
     private AsteroidLookupResponse parseAsteroidData(String response, SearchDates searchDates){
-        AsteroidLookupResponse lookupResponse = new AsteroidLookupResponse();
+        var lookupResponse = new AsteroidLookupResponse();
         lookupResponse.setStart_date(searchDates.getStart_date());
         lookupResponse.setEnd_date(searchDates.getEnd_date());
-        JSONObject jsonResponse = new JSONObject(response);
-        int asteroidsFound = jsonResponse.getInt(MainHelper.ELEMENT_COUNT_KEY);
+        var jsonResponse = new JSONObject(response);
+        var asteroidsFound = jsonResponse.getInt(MainHelper.ELEMENT_COUNT_KEY);
 
         if(asteroidsFound > 5) {
             log.info(MainHelper.FIVE_ASTEROIDS_ONLY_MESSAGE);
@@ -91,15 +92,15 @@ public class AsteroidLookupService {
     }
 
     private Asteroid[] populateAsteroids(JSONObject jsonResponse, int asteroidCount, SearchDates searchDates){
-        JSONObject nearEarthObjects = (JSONObject) jsonResponse.get(MainHelper.NEAR_EARTH_OBJECTS_KEY);
+        var nearEarthObjects = (JSONObject) jsonResponse.get(MainHelper.NEAR_EARTH_OBJECTS_KEY);
 
-        JSONArray objectsArray = nearEarthObjects.getJSONArray(searchDates.getStart_date());
-        Asteroid[] asteroids = new Asteroid[asteroidCount];
+        var objectsArray = nearEarthObjects.getJSONArray(searchDates.getStart_date());
+        var asteroids = new Asteroid[asteroidCount];
         log.info(MainHelper.PARSING_ASTEROID_DATA);
 
         for (int i = 0; i < asteroidCount && i < 5; i++) {
-            JSONObject asteroidInfo = (JSONObject) objectsArray.get(i);
-            Asteroid asteroid = commonUtils.parseAsteroidData(asteroidInfo);
+            var asteroidInfo = (JSONObject) objectsArray.get(i);
+            var asteroid = commonUtils.parseAsteroidData(asteroidInfo);
             asteroids[i] = asteroid;
         }
         return asteroids;
