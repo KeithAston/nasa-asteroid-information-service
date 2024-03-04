@@ -19,7 +19,7 @@ import java.util.Date;
 public class CommonUtils {
 
     public Asteroid parseAsteroidData(JSONObject json) {
-        Asteroid asteroid = new Asteroid();
+        var asteroid = new Asteroid();
         asteroid.setId(Integer.parseInt(json.getString(MainHelper.ID_KEY)));
         asteroid.setName(json.getString(MainHelper.NAME_KEY));
         asteroid.setIsPotentiallyHazardous(json.getBoolean(MainHelper.IS_POTENTIALLY_DANGEROUS_KEY));
@@ -29,8 +29,8 @@ public class CommonUtils {
     }
 
     private Asteroid extractAsteroidMetrics(Asteroid asteroid, JSONObject response){
-        JSONObject estimatedDiameters = response.getJSONObject(MainHelper.ESTIMATED_DIAMETER_KEY);
-        JSONObject kilometers = estimatedDiameters.getJSONObject(MainHelper.KILOMETERS_KEY);
+        var estimatedDiameters = response.getJSONObject(MainHelper.ESTIMATED_DIAMETER_KEY);
+        var kilometers = estimatedDiameters.getJSONObject(MainHelper.KILOMETERS_KEY);
 
         asteroid.setEstimatedDiameterInKMs_Min(kilometers.getDouble(MainHelper.ESTIMATED_DIAMETER_MIN_KEY));
         asteroid.setEstimatedDiameterInKMs_Max(kilometers.getDouble(MainHelper.ESTIMATED_DIAMETER_MAX_KEY));
@@ -39,9 +39,9 @@ public class CommonUtils {
     }
 
     private Asteroid populateCloseApproachData(Asteroid asteroid, JSONObject response){
-        JSONArray closeApproachDataArray = response.getJSONArray(MainHelper.CLOSE_APPROACH_DATA_KEY);
-        DateFormat formatter = new SimpleDateFormat(MainHelper.DATE_FORMAT);
-        Date todayDate = new Date();
+        var closeApproachDataArray = response.getJSONArray(MainHelper.CLOSE_APPROACH_DATA_KEY);
+        var formatter = new SimpleDateFormat(MainHelper.DATE_FORMAT);
+        var todayDate = new Date();
         JSONObject approachInfo;
         Date approachDate;
 
@@ -53,10 +53,10 @@ public class CommonUtils {
                 if (approachDate.compareTo(todayDate) >= 0 || closeApproachDataArray.length() == 1) {
                     asteroid.setCloseApproachDate(formatter.format(approachDate));
 
-                    JSONObject relativeVelocity = approachInfo.getJSONObject(MainHelper.RELATIVE_VELOCITY_KEY);
+                    var relativeVelocity = approachInfo.getJSONObject(MainHelper.RELATIVE_VELOCITY_KEY);
                     asteroid.setRelativeVelocityKmph(Double.parseDouble(relativeVelocity.getString(MainHelper.KMPH_KEY)));
 
-                    JSONObject missDistance = approachInfo.getJSONObject(MainHelper.MISS_DIST_KEY);
+                    var missDistance = approachInfo.getJSONObject(MainHelper.MISS_DIST_KEY);
                     asteroid.setMissDistanceKm(Double.parseDouble(missDistance.getString(MainHelper.KILOMETERS_KEY)));
 
                     return asteroid;

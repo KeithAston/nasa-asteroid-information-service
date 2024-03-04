@@ -25,10 +25,10 @@ public class NasaIntegrator {
 
     public String getAsteroidByDates(SearchDates searchDates) throws Exception {
         log.info(MainHelper.NASA_API_REQUEST_STARTING);
-        StopWatch watch = new StopWatch();
+        var watch = new StopWatch();
         watch.start();
         try {
-            String response = restTemplate.getForObject(
+            var response = restTemplate.getForObject(
                     getDatesearchAPIUrl(searchDates), String.class);
             watch.stop();
             log.info(MainHelper.NASA_API_SUCCESS_MESSAGE + watch.getTotalTimeSeconds() + "s");
@@ -46,10 +46,10 @@ public class NasaIntegrator {
 
     public String getAsteroidById(String asteroidId) throws Exception {
         log.info(MainHelper.NASA_API_REQUEST_STARTING);
-        StopWatch watch = new StopWatch();
+        var watch = new StopWatch();
         watch.start();
         try {
-            String response = restTemplate.getForObject(
+            var response = restTemplate.getForObject(
                     getLookupSearchAPIUrl(asteroidId),
                     String.class);
             watch.stop();
@@ -66,7 +66,7 @@ public class NasaIntegrator {
     }
 
     private String getLookupSearchAPIUrl(String asteroidId){
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.append(asteroidLookupConfiguration.getApiUrl());
         sb.append(asteroidId);
         sb.append(MainHelper.URL_PARAM_OPENER);
@@ -77,7 +77,7 @@ public class NasaIntegrator {
     }
 
     private String getDatesearchAPIUrl(SearchDates searchDates){
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.append(asteroidSearchDatesConfiguration.getApiUrl());
         sb.append(MainHelper.URL_PARAM_OPENER);
         sb.append(MainHelper.API_KEY_START_DATE);
